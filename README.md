@@ -18,7 +18,7 @@ The Canadian Amateur Radio Test Bank consists of questions that are used to asse
 
 ## How?
 
-Every day at UTC noon, a GitHub action is triggered. These actions download the test bank, and if there is an update, they commit the files to this archive.
+Every day at UTC noon, a series of GitHub actions is triggered. These actions download the test bank, and if there is an update, they commit the files to this archive.
 
 These archival jobs use the following user agent:
 
