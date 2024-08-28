@@ -1,0 +1,62 @@
+name: Download and Archive File
+
+on:
+  workflow_call:
+    inputs:
+      remote_endpoint:
+        description: "The remote file URL to download"
+        required: true
+        type: string
+      file_path:
+        description: "The name to use for the subdirectory"
+        required: true
+        type: string
+      file_extension:
+        description: "The extension for the downloaded file"
+        required: true
+        type: string
+
+jobs:
+  download_and_archive:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Git
+        run: |
+          git config --global user.name "Archival Job"
+          git config --global user.email "2662370B.github.action@gilani.me"
+
+      - name: Set file_name
+        run: |
+          current_date=$(date +%Y%m%d)
+          randomized_suffix=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 6 | head -n 1)
+          file_name="${current_date}_${randomized_suffix}${{ inputs.file_extension }}"
+          echo "file_name=$file_name" >> $GITHUB_ENV
+
+      - name: Create subdirectory and download remote file
+        run: |
+          mkdir -p "${{ inputs.file_path }}"
+          wget -O "${{ inputs.file_path }}/${file_name}" ${{ inputs.remote_endpoint }}
+
+      - name: Generate and store BSD-style SHA-512 checksum
+        run: |
+          sha512sum --tag "${{ inputs.file_path }}/${file_name}" > "${{ inputs.file_path }}/${file_name}.sha512"
+
+      - name: Copy to latest.${{inputs.file_extension}} and latest.${{inputs.file_extension}}.sha512
+        run: |
+          cp "${{ inputs.file_path }}/${file_name}" "${{ inputs.file_path }}/latest${{ inputs.file_extension }}"
+          cp "${{ inputs.file_path }}/${file_name}.sha512" "${{ inputs.file_path }}/latest${{ inputs.file_extension }}.sha512"
+
+      - name: Check for changes
+        run: |
+          git diff
+
+      - name: Commit and push changes
+        if: success()
+        run: |
+          git add .
+          git commit -m "Archive latest${{ inputs.file_extension }} and checksum"
+          git push origin main
