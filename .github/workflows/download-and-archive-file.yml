@@ -40,7 +40,7 @@ jobs:
           # In GitHub actions tr keeps reading forever, and so us dd to limit
           # the input to 512 bytes. The LC_ALL=C is to ensure that the output
           # is ASCII only.
-          randomized_suffix=$(dd bs=512 if=/dev/urandom count=1 2>/dev/null | LC_ALL=C tr -dc "A-Z0-9" | head -c 5)
+          randomized_suffix=$(dd bs=512 if=/dev/urandom count=1 2>/dev/null | LC_ALL=C tr -dc "a-z0-9" | head -c 5)
 
           # The archived files that will be downloaded
 
