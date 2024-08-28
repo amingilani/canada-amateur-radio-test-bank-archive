@@ -64,7 +64,7 @@ jobs:
           latest_file_name="${latest_file_basename}${{ inputs.file_extension }}"
           echo "latest_file_name=$latest_file_name" >> $GITHUB_ENV
 
-          latest_file_directory="${{ inputs.file_path }}/${archive_file_basename}"
+          latest_file_directory="${{ inputs.file_path }}/${latest_file_basename}"
           echo "latest_file_directory=$latest_file_directory" >> $GITHUB_ENV
 
           latest_file_path="${latest_file_directory}/${latest_file_name}"
@@ -85,8 +85,9 @@ jobs:
 
       - name: Update the latest files
         run: |
-          cp "${archive_file_path}" "${{ inputs.file_path }}/${latest_file_name}"
-          cp "${archive_file_path}.sha512" "${{ inputs.file_path }}/${latest_file_name}.sha512"
+          mkdir -p "${latest_file_directory}"
+          cp "${archive_file_path}" "${latest_file_path}"
+          cp "${archive_file_path}.sha512" "${latest_file_path}.sha512"
 
       - name: Extract zip file
         if: ${{ inputs.should_extract == true }}
