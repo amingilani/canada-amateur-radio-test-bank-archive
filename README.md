@@ -9,6 +9,7 @@ This repository serves as an archive for the Canadian Amateur Radio Test Bank, i
   - [Overview](#overview)
     - [Basic Level](#basic-level)
     - [Advanced Level](#advanced-level)
+  - [How?](#how)
   - [Contribution](#contribution)
   - [License](#license)
 
@@ -21,8 +22,9 @@ The Canadian Amateur Radio Test Bank consists of questions that are used to asse
 The Basic level covers fundamental topics related to amateur radio operations, including regulations, operating practices, and basic electronics. Passing the Basic exam is a prerequisite for obtaining an amateur radio license.
 
 The test bank can be downloaded from here:
-    + [PDF format](https://ised-isde.canada.ca/site/amateur-radio-operator-certificate-services/en/amateur-radio-exam-generator/print-all-basic-questions)
-    + [TXT formal](https://ised-isde.canada.ca/site/amateur-radio-operator-certificate-services/en/downloads)
+
++ [PDF format](https://ised-isde.canada.ca/site/amateur-radio-operator-certificate-services/en/amateur-radio-exam-generator/print-all-basic-questions)
++ [TXT formal](https://ised-isde.canada.ca/site/amateur-radio-operator-certificate-services/en/downloads)
 
 
 ### Advanced Level
@@ -30,10 +32,19 @@ The test bank can be downloaded from here:
 The Advanced level covers more complex topics such as advanced electronics, antennas, and transmission lines. This level is intended for those who wish to gain additional privileges and operate higher-power transmitters.
 
 The test bank can be downloaded from here:
-    + [PDF format](https://ised-isde.canada.ca/site/amateur-radio-operator-certificate-services/en/amateur-radio-exam-generator/print-all-advanced-questions)
-    + [TXT formal](https://ised-isde.canada.ca/site/amateur-radio-operator-certificate-services/en/downloads)
 
++ [PDF format](https://ised-isde.canada.ca/site/amateur-radio-operator-certificate-services/en/amateur-radio-exam-generator/print-all-advanced-questions)
++ [TXT formal](https://ised-isde.canada.ca/site/amateur-radio-operator-certificate-services/en/downloads)
 
+## How?
+
+Every day at UTC noon, a GitHub action is triggered. These actions download the test bank, and if there is an update, they commit the files to this archive.
+
+These archival jobs use the following user agent:
+
+```
+GilanisTestBankArchiver/1.0 (+https://github.com/amingilani/canada-amateur-radio-test-bank-archive)"
+```
 
 ## Contribution
 
