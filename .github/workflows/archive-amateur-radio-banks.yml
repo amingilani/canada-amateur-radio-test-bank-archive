@@ -17,29 +17,28 @@ jobs:
     uses: ./.github/workflows/download-and-archive-file.yml
     with:
       remote_endpoint: "http://apc-cap.ic.gc.ca/datafiles/amateur_advanced_questions_en.PDF"
-      file_path: "amateur_advanced"
+      file_path: "amateur_advanced/pdf/"
       file_extension: ".pdf"
 
   archive_amateur_basic_pdf:
-    needs: archive_amateur_advanced_pdf
     uses: ./.github/workflows/download-and-archive-file.yml
     with:
       remote_endpoint: "http://apc-cap.ic.gc.ca/datafiles/amateur_basic_questions_en.PDF"
-      file_path: "amateur_basic"
+      file_path: "amateur_basic/pdf/"
       file_extension: ".pdf"
 
-  archive_amateur_basic_zip:
-    needs: archive_amateur_basic_pdf
-    uses: ./.github/workflows/download-and-archive-file.yml
-    with:
-      remote_endpoint: "https://apc-cap.ic.gc.ca/datafiles/amat_basic_quest.zip"
-      file_path: "amat_basic"
-      file_extension: ".zip"
-
   archive_amateur_advanced_zip:
-    needs: archive_amateur_basic_zip
     uses: ./.github/workflows/download-and-archive-file.yml
     with:
       remote_endpoint: "https://apc-cap.ic.gc.ca/datafiles/amat_adv_quest.zip"
-      file_path: "amat_advanced"
+      file_path: "amateur_advanced/txt/"
       file_extension: ".zip"
+      should_extract: true
+
+  archive_amateur_basic_zip:
+    uses: ./.github/workflows/download-and-archive-file.yml
+    with:
+      remote_endpoint: "https://apc-cap.ic.gc.ca/datafiles/amat_basic_quest.zip"
+      file_path: "amateur_basic/txt/"
+      file_extension: ".zip"
+      should_extract: true

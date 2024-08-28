@@ -15,6 +15,10 @@ on:
         description: "The extension for the downloaded file"
         required: true
         type: string
+      should_extract:
+        description: "Whether to extract the downloaded zip file"
+        required: false
+        type: boolean
 
 jobs:
   download_and_archive_file:
@@ -53,10 +57,21 @@ jobs:
         run: |
           sha512sum --tag "${{ inputs.file_path }}/${file_name}" > "${{ inputs.file_path }}/${file_name}.sha512"
 
+      - name: Install unzip
+        if: ${{ inputs.should_extract == true }}
+        run: |
+          apt-get install update && apt-get install unzip
+
       - name: Copy to latest${{inputs.file_extension}} and latest${{inputs.file_extension}}.sha512
         run: |
           cp "${{ inputs.file_path }}/${file_name}" "${{ inputs.file_path }}/latest${{ inputs.file_extension }}"
           cp "${{ inputs.file_path }}/${file_name}.sha512" "${{ inputs.file_path }}/latest${{ inputs.file_extension }}.sha512"
+
+      - name: Extract zip file
+        if: ${{ inputs.should_extract == true }}
+        run: |
+          unzip "${{ inputs.file_path }}/${file_name}${{ inputs.file_extension}}" -d "${{ inputs.file_path }}/${file_name}"
+          unzip "${{ inputs.file_path }}/latest${{ inputs.file_extension }}" -d "${{ inputs.file_path }}/latest/"
 
       - name: Set commit message
         id: set_commit_message
