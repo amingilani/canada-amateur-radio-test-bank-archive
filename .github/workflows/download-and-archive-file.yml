@@ -20,9 +20,14 @@ jobs:
   download_and_archive:
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: write
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+        with:
+          ref: main
 
       - name: Set up Git
         run: |
@@ -55,12 +60,14 @@ jobs:
           cp "${{ inputs.file_path }}/${file_name}.sha512" "${{ inputs.file_path }}/latest${{ inputs.file_extension }}.sha512"
 
       - name: Check for changes
+        id: git_diff
         run: |
-          git diff
+          if git diff --quiet; then echo "no_changes=1" >> $GITHUB_ENV; else echo "no_changes=0" >> $GITHUB_ENV; fi
+
+      - name: Exit if no changes
+        if: env.no_changes == '1'
+        run: exit 0
 
       - name: Commit and push changes
-        if: success()
-        run: |
-          git add .
-          git commit -m "Archive latest${{ inputs.file_extension }} and checksum"
-          git push origin main
+        if: env.no_changes == '0'
+        uses: stefanzweifel/git-auto-commit-action@v5
