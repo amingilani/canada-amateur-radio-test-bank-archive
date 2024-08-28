@@ -93,7 +93,7 @@ jobs:
         if: ${{ inputs.should_extract == true }}
         run: |
           archive_file_extraction_directory="${archive_file_directory}/${archive_file_basename}"
-          latest_file_extraction_directory="${archive_file_directory}/${latest_file_basename}"
+          latest_file_extraction_directory="${latest_file_directory}/${latest_file_basename}"
 
 
           # Ensure destination directories exist
