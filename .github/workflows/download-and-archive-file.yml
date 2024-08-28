@@ -17,7 +17,7 @@ on:
         type: string
 
 jobs:
-  download_and_archive:
+  download_and_archive_file:
     runs-on: ubuntu-latest
 
     permissions:
