@@ -54,10 +54,16 @@ jobs:
           cp "${{ inputs.file_path }}/${file_name}" "${{ inputs.file_path }}/latest${{ inputs.file_extension }}"
           cp "${{ inputs.file_path }}/${file_name}.sha512" "${{ inputs.file_path }}/latest${{ inputs.file_extension }}.sha512"
 
+      - name: Set commit message
+        id: set_commit_message
+        run: |
+          commit_message="Archiving latest ${{ inputs.file_path }}/${file_name}"
+          echo "commit_message=$commit_message" >> $GITHUB_OUTPUT
+
       - name: Commit and push changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: Archiving latest ${{ inputs.file_path }}/${file_name}
+          commit_message: ${{ steps.set_commit_message.outputs.commit_message }}
           branch: main
           commit_user_name: Archival Job
           commit_user_email: 2662370B.github.action@gilani.me
