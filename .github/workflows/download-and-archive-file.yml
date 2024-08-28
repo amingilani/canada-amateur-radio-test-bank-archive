@@ -92,10 +92,6 @@ jobs:
       - name: Extract zip file
         if: ${{ inputs.should_extract == true }}
         run: |
-
-          sudo apt-get update
-          sudo apt-get install --assume-yes unzip
-
           archive_file_extraction_directory="${archive_file_directory}/${archive_file_basename}"
           latest_file_extraction_directory="${archive_file_directory}/${latest_file_basename}"
 
