@@ -40,7 +40,7 @@ jobs:
 
           # In GitHub actions tr keeps reading forever, and so us dd to limit
           # the input to 512 bytes. The LC_ALL=C is to ensure that the output
-          randomized_suffix=$(dd bs=512 if=/dev/urandom count=1 2>/dev/null | LC_ALL=C tr -dc "a-zA-Z0-9@#*=[]" | head -c 10)
+          randomized_suffix=$(dd bs=512 if=/dev/urandom count=1 2>/dev/null | LC_ALL=C tr -dc "a-zA-Z0-9" | head -c 10)
 
           file_name="${current_date}_${randomized_suffix}${{ inputs.file_extension }}"
           echo "file_name=$file_name" >> $GITHUB_ENV
