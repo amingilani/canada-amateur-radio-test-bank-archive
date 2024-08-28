@@ -82,13 +82,23 @@ jobs:
 
       - name: Generate and store BSD-style SHA-512 checksum
         run: |
-          sha512sum --tag "${archive_file_path}" > "${archive_file_path}.sha512"
+          archive_checksums_file_path="${archive_file_path}.checksums"
+
+          md5sum "${archive_file_path}" >> "${archive_checksums_file_path}"
+          sha1sum "${archive_file_path}" >> "${archive_checksums_file_path}"
+          sha256sum "${archive_file_path}" >> "${archive_checksums_file_path}"
+          sha512sum "${archive_file_path}" >> "${archive_checksums_file_path}"
+          b2sum "${archive_file_path}" >> "${archive_checksums_file_path}"
 
       - name: Update the latest files
         run: |
           mkdir -p "${latest_file_directory}"
+
+          archive_checksums_file_path="${archive_file_path}.checksums"
+          latest_checksums_file_path="${latest_file_path}.checksums"
+
           cp "${archive_file_path}" "${latest_file_path}"
-          cp "${archive_file_path}.sha512" "${latest_file_path}.sha512"
+          cp "${archive_checksums_file_path}" "${latest_checksums_file_path}"
 
       - name: Extract zip file
         if: ${{ inputs.should_extract == true }}
@@ -117,3 +127,4 @@ jobs:
           branch: main
           commit_user_name: Archival Job
           commit_user_email: 2662370B.github.action@gilani.me
+          file_pattern: "**/latest.zip **/latest.zip.checksums"
