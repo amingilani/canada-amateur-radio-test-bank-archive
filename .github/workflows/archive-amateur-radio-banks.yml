@@ -21,6 +21,7 @@ jobs:
       file_extension: ".pdf"
 
   archive_amateur_basic_pdf:
+    needs: archive_amateur_advanced_pdf
     uses: ./.github/workflows/download-and-archive-file.yml
     with:
       remote_endpoint: "http://apc-cap.ic.gc.ca/datafiles/amateur_basic_questions_en.PDF"
@@ -28,6 +29,7 @@ jobs:
       file_extension: ".pdf"
 
   archive_amateur_advanced_zip:
+    needs: archive_amateur_basic_pdf
     uses: ./.github/workflows/download-and-archive-file.yml
     with:
       remote_endpoint: "https://apc-cap.ic.gc.ca/datafiles/amat_adv_quest.zip"
@@ -36,6 +38,7 @@ jobs:
       should_extract: true
 
   archive_amateur_basic_zip:
+    needs: archive_amateur_advanced_zip
     uses: ./.github/workflows/download-and-archive-file.yml
     with:
       remote_endpoint: "https://apc-cap.ic.gc.ca/datafiles/amat_basic_quest.zip"
