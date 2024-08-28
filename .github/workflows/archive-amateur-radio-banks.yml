@@ -8,6 +8,10 @@ on:
 permissions:
   contents: write
 
+# Note: the jobs depend on each other one after the other.
+# This ensures that they are run sequentially. Otherwise a race condition could
+# occur where the repository may be updated by one job while another job is
+# running.
 jobs:
   archive_amateur_advanced_pdf:
     uses: ./.github/workflows/download-and-archive-file.yml
@@ -17,6 +21,7 @@ jobs:
       file_extension: ".pdf"
 
   archive_amateur_basic_pdf:
+    needs: archive_amateur_advanced_pdf
     uses: ./.github/workflows/download-and-archive-file.yml
     with:
       remote_endpoint: "http://apc-cap.ic.gc.ca/datafiles/amateur_basic_questions_en.PDF"
@@ -24,6 +29,7 @@ jobs:
       file_extension: ".pdf"
 
   archive_amateur_basic_zip:
+    needs: archive_amateur_basic_pdf
     uses: ./.github/workflows/download-and-archive-file.yml
     with:
       remote_endpoint: "https://apc-cap.ic.gc.ca/datafiles/amat_basic_quest.zip"
@@ -31,6 +37,7 @@ jobs:
       file_extension: ".zip"
 
   archive_amateur_advanced_zip:
+    needs: archive_amateur_basic_zip
     uses: ./.github/workflows/download-and-archive-file.yml
     with:
       remote_endpoint: "https://apc-cap.ic.gc.ca/datafiles/amat_adv_quest.zip"
