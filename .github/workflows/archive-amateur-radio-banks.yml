@@ -6,34 +6,30 @@ on:
   workflow_dispatch:
 
 jobs:
-  archive_files:
-    runs-on: ubuntu-latest
+  archive_amateur_advanced_pdf:
+    uses: ./.github/workflows/download-and-archive-file.yml
+    with:
+      remote_endpoint: "http://apc-cap.ic.gc.ca/datafiles/amateur_advanced_questions_en.PDF"
+      file_path: "amateur_advanced"
+      file_extension: ".pdf"
 
-    steps:
-      - name: Archive Amateur Advanced Questions PDF
-        uses: ./.github/workflows/download_and_archive.yml
-        with:
-          remote_endpoint: "http://apc-cap.ic.gc.ca/datafiles/amateur_advanced_questions_en.PDF"
-          file_path: "amateur_advanced"
-          file_extension: ".pdf"
+  archive_amateur_basic_pdf:
+    uses: ./.github/workflows/download-and-archive-file.yml
+    with:
+      remote_endpoint: "http://apc-cap.ic.gc.ca/datafiles/amateur_basic_questions_en.PDF"
+      file_path: "amateur_basic"
+      file_extension: ".pdf"
 
-      - name: Archive Amateur Basic Questions PDF
-        uses: ./.github/workflows/download_and_archive.yml
-        with:
-          remote_endpoint: "http://apc-cap.ic.gc.ca/datafiles/amateur_basic_questions_en.PDF"
-          file_path: "amateur_basic"
-          file_extension: ".pdf"
+  archive_amateur_basic_zip:
+    uses: ./.github/workflows/download-and-archive-file.yml
+    with:
+      remote_endpoint: "https://apc-cap.ic.gc.ca/datafiles/amat_basic_quest.zip"
+      file_path: "amat_basic"
+      file_extension: ".zip"
 
-      - name: Archive Amateur Basic Questions ZIP
-        uses: ./.github/workflows/download_and_archive.yml
-        with:
-          remote_endpoint: "https://apc-cap.ic.gc.ca/datafiles/amat_basic_quest.zip"
-          file_path: "amat_basic"
-          file_extension: ".zip"
-
-      - name: Archive Amateur Advanced Questions ZIP
-        uses: ./.github/workflows/download_and_archive.yml
-        with:
-          remote_endpoint: "https://apc-cap.ic.gc.ca/datafiles/amat_adv_quest.zip"
-          file_path: "amat_advanced"
-          file_extension: ".zip"
+  archive_amateur_advanced_zip:
+    uses: ./.github/workflows/download-and-archive-file.yml
+    with:
+      remote_endpoint: "https://apc-cap.ic.gc.ca/datafiles/amat_adv_quest.zip"
+      file_path: "amat_advanced"
+      file_extension: ".zip"
