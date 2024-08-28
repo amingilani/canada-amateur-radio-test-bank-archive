@@ -29,11 +29,6 @@ jobs:
         with:
           ref: main
 
-      - name: Set up Git
-        run: |
-          git config --global user.name "Archival Job"
-          git config --global user.email "2662370B.github.action@gilani.me"
-
       - name: Set file_name
         run: |
           current_date=$(date --iso-8601)
@@ -59,15 +54,10 @@ jobs:
           cp "${{ inputs.file_path }}/${file_name}" "${{ inputs.file_path }}/latest${{ inputs.file_extension }}"
           cp "${{ inputs.file_path }}/${file_name}.sha512" "${{ inputs.file_path }}/latest${{ inputs.file_extension }}.sha512"
 
-      - name: Check for changes
-        id: git_diff
-        run: |
-          if git diff --quiet; then echo "no_changes=1" >> $GITHUB_ENV; else echo "no_changes=0" >> $GITHUB_ENV; fi
-
-      - name: Exit if no changes
-        if: env.no_changes == '1'
-        run: exit 0
-
       - name: Commit and push changes
-        if: env.no_changes == '0'
         uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: Archiving latest ${{ inputs.file_path }}/${file_name}
+          branch: main
+          commit_user_name: Archival Job
+          commit_user_email: 2662370B.github.action@gilani.me
