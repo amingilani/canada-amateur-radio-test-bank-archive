@@ -54,7 +54,7 @@ jobs:
         run: |
           sha512sum --tag "${{ inputs.file_path }}/${file_name}" > "${{ inputs.file_path }}/${file_name}.sha512"
 
-      - name: Copy to latest.${{inputs.file_extension}} and latest.${{inputs.file_extension}}.sha512
+      - name: Copy to latest${{inputs.file_extension}} and latest${{inputs.file_extension}}.sha512
         run: |
           cp "${{ inputs.file_path }}/${file_name}" "${{ inputs.file_path }}/latest${{ inputs.file_extension }}"
           cp "${{ inputs.file_path }}/${file_name}.sha512" "${{ inputs.file_path }}/latest${{ inputs.file_extension }}.sha512"
