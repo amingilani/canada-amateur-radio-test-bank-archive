@@ -100,8 +100,21 @@ jobs:
           cp "${archive_file_path}" "${latest_file_path}"
           cp "${archive_checksums_file_path}" "${latest_checksums_file_path}"
 
+      - name: Check if the latest file has changed
+        id: is_latest_file_changed
+        run: |
+          git add .
+
+          if git diff HEAD --quiet -- "${latest_file_path}"; then
+            echo "The latest file is the same as the new file"
+            echo "has_changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "The latest file is different from the new file"
+            echo "has_changed=true" >> $GITHUB_OUTPUT
+          fi
+
       - name: Extract zip file
-        if: ${{ inputs.should_extract == true }}
+        if: ${{ (inputs.should_extract == true) && (steps.is_latest_file_changed.outputs.has_changed == 'true') }}
         run: |
           archive_file_extraction_directory="${archive_file_directory}/${archive_file_basename}"
           latest_file_extraction_directory="${latest_file_directory}/${latest_file_basename}"
@@ -115,16 +128,17 @@ jobs:
           unzip "${latest_file_path}" -d "${latest_file_extraction_directory}"
 
       - name: Set commit message
+        if: ${{ steps.is_latest_file_changed.outputs.has_changed == 'true' }}
         id: set_commit_message
         run: |
           commit_message="Archiving latest ${archive_file_path}"
           echo "commit_message=$commit_message" >> $GITHUB_OUTPUT
 
       - name: Commit and push changes
+        if: ${{ steps.is_latest_file_changed.outputs.has_changed == 'true' }}
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: ${{ steps.set_commit_message.outputs.commit_message }}
           branch: main
           commit_user_name: Archival Job
           commit_user_email: 2662370B.github.action@gilani.me
-          file_pattern: "**/latest.zip **/latest.zip.checksums"
