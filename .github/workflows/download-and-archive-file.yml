@@ -40,10 +40,14 @@ jobs:
           file_name="${current_date}_${randomized_suffix}${{ inputs.file_extension }}"
           echo "file_name=$file_name" >> $GITHUB_ENV
 
-      - name: Create subdirectory and download remote file
+      - name: Download remote file into subdirectory
         run: |
+          user_agent="GilanisTestBankArchiver/1.0 (+https://github.com/amingilani/canada-amateur-radio-test-bank-archive)"
           mkdir -p "${{ inputs.file_path }}"
-          wget -O "${{ inputs.file_path }}/${file_name}" ${{ inputs.remote_endpoint }}
+          echo "Downloading from ${{ inputs.remote_endpoint }} to ${{ inputs.file_path }}/${file_name} with User-Agent: ${user_agent}"
+          wget --user-agent="${user_agent}" \
+              --output-document="${{ inputs.file_path }}/${file_name}" \
+              ${{ inputs.remote_endpoint }} || { echo "Download failed!"; exit 1; }
 
       - name: Generate and store BSD-style SHA-512 checksum
         run: |
