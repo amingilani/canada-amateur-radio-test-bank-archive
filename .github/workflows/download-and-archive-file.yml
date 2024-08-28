@@ -74,6 +74,7 @@ jobs:
         run: |
           user_agent="GilanisTestBankArchiver/1.0 (+https://github.com/amingilani/canada-amateur-radio-test-bank-archive)"
           echo "Downloading from ${{ inputs.remote_endpoint }} to ${archive_file_path} with User-Agent: ${user_agent}"
+          mkdir -p "${archive_file_directory}"
           wget --user-agent="${user_agent}" \
               --output-document="${archive_file_path}" \
               ${{ inputs.remote_endpoint }} || { echo "Download failed!"; exit 1; }
