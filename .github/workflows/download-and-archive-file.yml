@@ -42,58 +42,73 @@ jobs:
           randomized_suffix=$(dd bs=512 if=/dev/urandom count=1 2>/dev/null | LC_ALL=C tr -dc "A-Z0-9" | head -c 10)
 
           # The archived files that will be downloaded
+
           archive_file_basename=${current_date}_${randomized_suffix}
-          archive_file_name="${archive_file_basename}${{ inputs.file_extension }}"
-
-          # The latest file is always stored in the same name
-          latest_file_basename="latest"
-          latest_file_name="${latest_file_basename}${{ inputs.file_extension }}"
-
           echo "archive_file_basename=$archive_file_basename" >> $GITHUB_ENV
+
+          archive_file_name="${archive_file_basename}${{ inputs.file_extension }}"
           echo "archive_file_name=$archive_file_name" >> $GITHUB_ENV
+
+          archive_file_directory="${{ inputs.file_path }}/${archive_file_basename}"
+          echo "archive_file_directory=$archive_file_directory" >> $GITHUB_ENV
+
+          archive_file_path="${archive_file_directory}/${archive_file_name}"
+          echo "archive_file_path=$archive_file_path" >> $GITHUB_ENV
+
+
+          # The latest file is always stored with the same name
+
+          latest_file_basename="latest"
+          echo "latest_file_basename=$latest_file_basename" >> $GITHUB_ENV
+
+          latest_file_name="${latest_file_basename}${{ inputs.file_extension }}"
           echo "latest_file_name=$latest_file_name" >> $GITHUB_ENV
+
+          latest_file_directory="${{ inputs.file_path }}/${archive_file_basename}"
+          echo "latest_file_directory=$latest_file_directory" >> $GITHUB_ENV
+
+          latest_file_path="${latest_file_directory}/${latest_file_name}"
+          echo "latest_file_path=$latest_file_path" >> $GITHUB_ENV
 
       - name: Download remote file into subdirectory
         run: |
           user_agent="GilanisTestBankArchiver/1.0 (+https://github.com/amingilani/canada-amateur-radio-test-bank-archive)"
-          mkdir -p "${{ inputs.file_path }}"
-          echo "Downloading from ${{ inputs.remote_endpoint }} to ${{ inputs.file_path }}/${archive_file_name} with User-Agent: ${user_agent}"
+          echo "Downloading from ${{ inputs.remote_endpoint }} to ${archive_file_path} with User-Agent: ${user_agent}"
           wget --user-agent="${user_agent}" \
-              --output-document="${{ inputs.file_path }}/${archive_file_name}" \
+              --output-document="${archive_file_path}" \
               ${{ inputs.remote_endpoint }} || { echo "Download failed!"; exit 1; }
 
       - name: Generate and store BSD-style SHA-512 checksum
         run: |
-          sha512sum --tag "${{ inputs.file_path }}/${archive_file_name}" > "${{ inputs.file_path }}/${archive_file_name}.sha512"
-
-      - name: Install unzip
-        if: ${{ inputs.should_extract == true }}
-        run: |
-          sudo apt-get update
-          sudo apt-get install --assume-yes unzip
+          sha512sum --tag "${archive_file_path}" > "${archive_file_path}.sha512"
 
       - name: Update the latest files
         run: |
-          cp "${{ inputs.file_path }}/${archive_file_name}" "${{ inputs.file_path }}/${latest_file_name}"
-          cp "${{ inputs.file_path }}/${archive_file_name}.sha512" "${{ inputs.file_path }}/${latest_file_name}.sha512"
+          cp "${archive_file_path}" "${{ inputs.file_path }}/${latest_file_name}"
+          cp "${archive_file_path}.sha512" "${{ inputs.file_path }}/${latest_file_name}.sha512"
 
       - name: Extract zip file
         if: ${{ inputs.should_extract == true }}
         run: |
 
-          archive_directory_path="${{ inputs.file_path }}/${archive_file_basename}"
-          latest_directory_path="${{ inputs.file_path }}/${latest_file_basename}"
-          # Ensure destination directories exist
-          mkdir -p "${archive_directory_path}"
-          mkdir -p "${latest_directory_path}"
+          sudo apt-get update
+          sudo apt-get install --assume-yes unzip
 
-          unzip "${{ inputs.file_path }}/${archive_file_name}" -d "${archive_directory_path}"
-          unzip "${{ inputs.file_path }}/${latest_file_name}" -d "${latest_directory_path}"
+          archive_file_extraction_directory="${archive_file_directory}/${archive_file_basename}"
+          latest_file_extraction_directory="${archive_file_directory}/${latest_file_basename}"
+
+
+          # Ensure destination directories exist
+          mkdir -p "${archive_file_extraction_directory}"
+          mkdir -p "${latest_file_extraction_directory}"
+
+          unzip "${archive_file_path}" -d "${archive_file_extraction_directory}"
+          unzip "${latest_file_path}" -d "${latest_file_extraction_directory}"
 
       - name: Set commit message
         id: set_commit_message
         run: |
-          commit_message="Archiving latest ${{ inputs.file_path }}/${archive_file_name}"
+          commit_message="Archiving latest ${archive_file_path}"
           echo "commit_message=$commit_message" >> $GITHUB_OUTPUT
 
       - name: Commit and push changes
